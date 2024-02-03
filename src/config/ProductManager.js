@@ -9,26 +9,24 @@ export class ProductManager {
     // Método para añadir productos nuevos
     async addProduct(nuevoProducto) {
         const productos = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        if (nuevoProducto.code && nuevoProducto.id && nuevoProducto.title && nuevoProducto.description && nuevoProducto.price && nuevoProducto.thumbnail && nuevoProducto.code && nuevoProducto.stock) {
+        if (nuevoProducto.title && nuevoProducto.description && nuevoProducto.price && nuevoProducto.thumbnail && nuevoProducto.stock && nuevoProducto.code && nuevoProducto.id) {
             const indice = productos.findIndex(producto => producto.code === nuevoProducto.code)
-            console.log(indice)
             if (indice === -1) {
                 productos.push(nuevoProducto)
-                console.log(productos)
                 await fs.writeFile(this.path, JSON.stringify(productos))
-                console.log('El producto fue creado exitosamente')
+                return 'El producto fue creado exitosamente';
             } else {
-                console.log('Este producto ya existe')
+                return 'Este producto ya existe';
             }
         } else {
-            console.log('Todas las propiedades de los productos son obligatorias')
+            return 'Todas las propiedades de los productos son obligatorias'
         }
     }
 
     // Método para mostrar todos los productos añadidos
     async getProducts() {
         const productos = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        console.log(productos)
+        return productos
     }
 
     // Método para buscar un producto por ID
@@ -36,10 +34,10 @@ export class ProductManager {
         const productos = JSON.parse(await fs.readFile(this.path, 'utf-8'));
         const producto = productos.find(producto => producto.id === id);
         if (producto) {
-            console.log(producto);
+            return producto;
         }
         else {
-            console.log('El producto que buscas no existe');
+            return 'El producto que buscas no existe';
         }
     }
 
@@ -55,9 +53,9 @@ export class ProductManager {
             productos[indice].code = nuevoProducto.code
             productos[indice].stock = nuevoProducto.stock
             await fs.writeFile(this.path, JSON.stringify(productos));
-            console.log('El producto fue actualizado exitosamente');
+            return 'El producto fue actualizado exitosamente';
         } else {
-            console.log('El producto que quieres actualizar no existe');
+            return 'El producto que quieres actualizar no existe';
         }
     }
 
@@ -68,9 +66,9 @@ export class ProductManager {
         if (indice != -1) {
             const productosFiltrados = productos.filter(producto => producto.id != id)
             await fs.writeFile(this.path, JSON.stringify(productosFiltrados))
-            console.log('El producto fue eliminado exitosamente')
+            return 'El producto fue eliminado exitosamente';
         } else {
-            console.log('El producto que quieres eliminar no existe')
+            return 'El producto que quieres eliminar no existe';
         }
     }
 }
