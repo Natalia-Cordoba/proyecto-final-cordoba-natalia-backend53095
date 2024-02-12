@@ -1,4 +1,5 @@
-import { promises as fs } from 'fs'
+import { promises as fs } from 'fs';
+import crypto from 'crypto';
 
 // La clase ProductManager gestiona los productos 
 export class ProductManager {
@@ -9,9 +10,13 @@ export class ProductManager {
     // Método para añadir productos nuevos
     async addProduct(nuevoProducto) {
         const productos = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        if (nuevoProducto.title && nuevoProducto.description && nuevoProducto.price && nuevoProducto.thumbnail && nuevoProducto.stock && nuevoProducto.code && nuevoProducto.id) {
+        if (nuevoProducto.title && nuevoProducto.description && nuevoProducto.price && nuevoProducto.stock && nuevoProducto.code && nuevoProducto.category) {
             const indice = productos.findIndex(producto => producto.code === nuevoProducto.code)
             if (indice === -1) {
+                nuevoProducto.status = true
+                if (!nuevoProducto.thumbnail)
+                    nuevoProducto.thumbnail = []
+                nuevoProducto.id = crypto.randomBytes(10).toString('hex')
                 productos.push(nuevoProducto)
                 await fs.writeFile(this.path, JSON.stringify(productos))
                 return 'El producto fue creado exitosamente';
@@ -33,12 +38,7 @@ export class ProductManager {
     async getProductById(id) {
         const productos = JSON.parse(await fs.readFile(this.path, 'utf-8'));
         const producto = productos.find(producto => producto.id === id);
-        if (producto) {
             return producto;
-        }
-        else {
-            return 'El producto que buscas no existe';
-        }
     }
 
     // Método para actualizar un producto
