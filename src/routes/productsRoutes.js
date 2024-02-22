@@ -3,7 +3,6 @@ import { ProductManager } from '../config/ProductManager.js';
 
 //creo una instancia de ProductManager, le indico la ruta al archivo json con los productos
 const productManager = new ProductManager('./src/data/products.json')
-
 const productsRouter = Router()
 
 productsRouter.get('/', async (req, res) => {
@@ -15,9 +14,15 @@ productsRouter.get('/', async (req, res) => {
             limite = prods.length
         }
         const prodsLimit = prods.slice(0, limite)
-        res.status(200).send(prodsLimit)
+        res.render('templates/index', {
+            mostrarProductos: true,
+            productos: prodsLimit,
+            css: 'index.css',
+        })
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al consultar productos: ${error}`)
+        res.status(500).send('templates/error', {
+            error: error,
+        })
     }
 })
 

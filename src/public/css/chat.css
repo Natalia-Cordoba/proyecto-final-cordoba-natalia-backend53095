@@ -1,0 +1,31 @@
+.tituloChat {
+    width: 50%;
+    text-align: center;
+    font-size: xx-large;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    letter-spacing: 2px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.inputMensaje {
+    display: flex;
+    flex-direction: column;
+    font-size: x-large;
+    margin: 10px;
+}
+
+label {
+    text-align: center;
+}
+
+input {
+    border: 1px solid rgb(134, 42, 161);
+    margin: 20px;
+    width: 300px;
+    height: 50px;
+}
+
+.mensajes {
+    font-size: large;
+}

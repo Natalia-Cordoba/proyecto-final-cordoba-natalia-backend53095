@@ -17,7 +17,10 @@ cartRouter.get('/', async (req, res) => {
 cartRouter.post('/:pid', async (req, res) => {
     try {
         const productoId = req.params.pid
-        const { quantity } = req.body
+        let { quantity } = req.body
+        if (!quantity || isNaN(quantity)) {
+            quantity = 1;
+        }
         const mensaje = await cartManager.addProductByCart(productoId, quantity)
         res.status(200).send(mensaje)
     } catch (error) {
