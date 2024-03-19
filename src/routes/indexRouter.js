@@ -11,7 +11,7 @@ const indexRouter = express.Router()
 //Routes
 indexRouter.use('/public', express.static(__dirname + '/public'))
 indexRouter.use ('/api/products', productsRouter, express.static(__dirname + '/public'))
-indexRouter.use ('/api/cart', cartRouter)
+indexRouter.use ('/api/cart', cartRouter, express.static(__dirname + '/public'))
 indexRouter.use ('/api/chat', chatRouter, express.static(__dirname + '/public'))
 indexRouter.use ('/api/users', userRouter)
 

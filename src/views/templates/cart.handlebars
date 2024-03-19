@@ -1,0 +1,14 @@
+<h1>Carrito</h1>
+
+<div>
+    {{#unless productos.length}}
+    <p>No se han agregado productos al carrito</p>
+    {{else}}
+    {{#each productos}}
+    <div>
+        <h3>Producto: {{ this.title }}</h3>
+        <p>Cantidad: {{ this.quantity }}</p>
+    </div>
+    {{/each}}
+    {{/unless}}
+</div>

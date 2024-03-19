@@ -18,7 +18,15 @@ cartRouter.get('/:cid', async (req, res) => {
     try {
         const cartId = req.params.cid
         const cart = await cartModel.findById(cartId).populate('products.id_prod')
-        res.status(200).send(cart)
+       
+        let productosProcesados = cart.products.map(producto => ({
+            title: producto.id_prod.title,
+            quantity: producto.quantity
+        }));
+
+        res.status(200).render('templates/cart', {
+            productos: productosProcesados
+        })
     } catch (error) {
         res.status(500).send(`Error interno del servidor al consultar el carrito: ${error}`)
     }

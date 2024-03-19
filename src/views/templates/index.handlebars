@@ -1,9 +1,8 @@
-
 <h1 class="tituloProductos">Nuestros libros</h1>
 
 <div class="todosProductos">
-{{#if mostrarProductos}}
-{{#each productos}}
+    {{#if mostrarProductos}}
+    {{#each productos}}
     <div class="contenedorProducto">
         <h2 class="tituloProducto">Titulo: {{this.title}}</h2>
         <img src="../../public/img/{{this.img}}" alt="Imagen de {{this.title}}">
@@ -12,10 +11,8 @@
         <p>Stock disponible: {{this.stock}}</p>
         <h3 class="precio">Precio: {{this.price}}</h3>
     </div>
-{{/each}}
-{{else}}
+    {{/each}}
+    {{else}}
     <p>No se pueden mostrar los productos</p>
-{{/if}}
+    {{/if}}
 </div>
-
-
