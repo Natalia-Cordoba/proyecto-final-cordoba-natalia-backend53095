@@ -20,7 +20,7 @@ const server = app.listen(PORT, () => {
 const io = new Server(server)
 
 //Conexión con base de datos
-mongoose.connect("mongodb+srv://nataliacordoba:<password>@cluster0.yd9v8ec.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("mongodb+srv://nataliacordoba:coderhouse@cluster0.yd9v8ec.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 .then(() => console.log("DB is connected"))
 .catch(error => console.log(error))
 
