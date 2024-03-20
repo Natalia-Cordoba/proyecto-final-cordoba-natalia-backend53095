@@ -22,13 +22,13 @@ productsRouter.get('/', async (req, res) => {
 
 
         const prods = await productModel.paginate(query, { limit: limi, page: pag, sort: ordQuery });
-        console.log(prods)
-        res.status(200).send(prods)
-        // .render('templates/index', {
-        //     mostrarProductos: true,
-        //     productos: prods.docs,
-        //     css: 'index.css',
-        // })
+        const productos = prods.docs.map(producto => producto.toObject());
+        console.log(prods.docs)
+        res.status(200).render('templates/index', {
+            mostrarProductos: true,
+            productos: productos,
+            css: 'index.css',
+        })
     } catch (error) {
         res.status(500).render('templates/error', {
             error: error,
