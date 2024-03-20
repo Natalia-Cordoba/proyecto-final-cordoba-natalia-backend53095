@@ -23,7 +23,7 @@ productsRouter.get('/', async (req, res) => {
 
         const prods = await productModel.paginate(query, { limit: limi, page: pag, sort: ordQuery });
         const productos = prods.docs.map(producto => producto.toObject());
-        console.log(prods.docs)
+        console.log(prods)
         res.status(200).render('templates/index', {
             mostrarProductos: true,
             productos: productos,
