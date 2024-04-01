@@ -1,5 +1,6 @@
 import local from 'passport-local';
 import passport from 'passport';
+import GithubStrategy from 'passport-github2';
 import userModel from '../../models/user.js';
 import { createHash, validatePassword } from '../../utils/bcrypt.js';
 
@@ -9,6 +10,7 @@ const localStrategy = local.Strategy
 const initializePassport = () => {
     //defino en que rutas se aplican mis estrategias
 
+    //estrategia registro
     passport.use('register', new localStrategy(
         { passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
             try {
@@ -36,6 +38,7 @@ const initializePassport = () => {
         done(null, user)
     })
 
+    //estrategia de login
     passport.use('login', new localStrategy(
         { usernameField: 'email' }, async (username, password, done) => {
             try {
@@ -50,6 +53,25 @@ const initializePassport = () => {
             }
         }))
         
+    //estrategia de github
+    passport.use('github', new GithubStrategy({
+        clientID: " ",
+        clientSecret: " ",
+        callbackURL: "http://localhost:8080/api/session/githubSession"
+    }, async (accessToken, refreshToken, profile, done) => {
+        try {
+            const user = await userModel.findOne({ email: profile._json.email }).lean()
+            if (user) {
+                done(null, user)
+            } else {
+                console.log(profile._json)
+                const userCreated = await userModel.create({ first_name: profile._json.name, last_name: ' ', email: profile._json.email, age: 18, password: createHash(`${profile._json.name}`) }) 
+                return done(null, userCreated)
+            }
+        } catch (error) {
+            return done(error)
+        }
+    }))
 }
 
 export default initializePassport;
