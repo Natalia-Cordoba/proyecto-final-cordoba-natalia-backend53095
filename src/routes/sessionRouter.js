@@ -3,6 +3,18 @@ import passport from "passport";
 
 const sessionRouter = Router()
 
+sessionRouter.get('/', (req, res) => {
+    res.render("templates/login", {
+        css: 'loginRegistro.css'
+    })
+})
+
+sessionRouter.get('/registroForm', (req, res) => {
+    res.render("templates/register", {
+        css: 'loginRegistro.css'
+    })
+})
+
 sessionRouter.get('/login', passport.authenticate('login'), async (req, res) => {
     try {
         if (!req.user) {
