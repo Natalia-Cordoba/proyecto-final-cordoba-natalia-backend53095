@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import { login, register, sessionGithub, logout, testJWT, current } from "../controllers/sessionController.js";
 
 const sessionRouter = Router()
 
@@ -15,64 +16,18 @@ sessionRouter.get('/registroForm', (req, res) => {
     })
 })
 
-sessionRouter.get('/login', passport.authenticate('login'), async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).send("Usuario o contraseña no válidos")
-        }
+sessionRouter.get('/login', passport.authenticate('login'), login)
 
-        req.session.user = {
-            email: req.user.email,
-            first_name: req.user.first_name
-        }
-        
-        res.status(200).send("Usuario logueado correctamente")
+sessionRouter.post('/register', passport.authenticate('register'), register)
 
-    } catch (error) {
-        res.status(500).send("Error al loguear usuario")
-    }
-})
+sessionRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { })
 
-sessionRouter.post('/register', passport.authenticate('register'), async (req, res) => {
-    try {
-        if (!req.user) {
-            res.status(400).send("Usuario ya existente en la aplicación")
-        } 
+sessionRouter.get('/githubSession', passport.authenticate('github'), sessionGithub)
 
-        res.status(200).send("Usuario creado correctamente")
+sessionRouter.get('/logout', logout)
 
-    } catch (error) {
-        res.status(500).send("Error al registrar usuario")
-    }
-})
+sessionRouter.get('/current', passport.authenticate('jwt'), current)
 
-sessionRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }), async (req, res) => { r })
-
-sessionRouter.get('/githubSession', passport.authenticate('github'), async (req, res) => {
-    console.log(req)
-    req.session.user = {
-        email: req.user.email,
-        first_name: req.user.name
-    }
-    res.redirect('/')
-})
-
-sessionRouter.get('/current', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.status(200).send("Usuario logueado");
-    } else {
-        res.status(401).send("Usuario no autenticado");
-    }
-});
-
-sessionRouter.get('/logout', (req, res) => {
-    req.session.destroy(function (e) {
-        if (e) {
-            console.log(e)
-        } else {
-            res.status(200).redirect("/")
-        }
-    })
-})
+sessionRouter.get('/testJWT', passport.authenticate('jwt', { session: false }), testJWT)
 
 export default sessionRouter;

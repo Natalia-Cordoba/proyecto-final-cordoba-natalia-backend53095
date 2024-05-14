@@ -3,6 +3,8 @@ import passport from 'passport';
 import GithubStrategy from 'passport-github2';
 import userModel from '../../models/user.js';
 import { createHash, validatePassword } from '../../utils/bcrypt.js';
+import { strategyJWT } from './strategies/jwtStrategy.js';
+import varenv from '../../dotenv.js';
 
 //Passport trabaje con uno o mas middelwares
 const localStrategy = local.Strategy
@@ -55,8 +57,8 @@ const initializePassport = () => {
         
     //estrategia de github
     passport.use('github', new GithubStrategy({
-        clientID: "Iv1.fb023e29069763d3",
-        clientSecret: "c5b6b354a64d956c630b5db55239c5692999d699",
+        clientID: varenv.client_ID,
+        clientSecret: varenv.client_secret,
         callbackURL: "http://localhost:8080/api/session/githubSession"
     }, async (accessToken, refreshToken, profile, done) => {
         try {
@@ -72,6 +74,8 @@ const initializePassport = () => {
             return done(error)
         }
     }))
+
+    passport.use(strategyJWT)
 }
 
 export default initializePassport;

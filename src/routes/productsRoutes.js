@@ -1,84 +1,17 @@
-import productModel from "../models/product.js";
 import { Router } from "express";
+import passport from "passport";
+import { getProducts, getProduct, createProduct, updateProduct, deleteProduct } from '../controllers/productsController.js'
 
 const productsRouter = Router()
 
-productsRouter.get('/', async (req, res) => {
-    try {
-        const { limit, page, filter, ord } = req.query
-        let metFilter;
-        const pag = page !== undefined ? page : 1;
-        const limi = limit != undefined ? limit : 10;
-        
-        if (filter == "true" || filter == "false") {
-            metFilter = "status"
-        } else {
-            if (filter !== undefined)
-                metFilter = "category";
-        }
+productsRouter.get('/', getProducts)
 
-        const query = metFilter != undefined ? { [metFilter]: filter } : {};
-        const ordQuery = ord !== undefined ? { price: ord } : {};
+productsRouter.get('/:pid', getProduct)
 
+productsRouter.post('/', passport.authenticate('jwt', { session: false }), createProduct)
 
-        const prods = await productModel.paginate(query, { limit: limi, page: pag, sort: ordQuery });
-        const productos = prods.docs.map(producto => producto.toObject());
-        console.log(prods)
-        res.status(200).render('templates/index', {
-            mostrarProductos: true,
-            productos: productos,
-            css: 'index.css',
-        })
-    } catch (error) {
-        res.status(500).render('templates/error', {
-            error: error,
-        })
-    }
-})
+productsRouter.put('/:pid', passport.authenticate('jwt', { session: false }), updateProduct)
 
-productsRouter.get('/:pid', async (req, res) => {
-    try {
-        const idProduct = req.params.pid
-        const prod = await productModel.findById(idProduct)
-        if (prod) {
-            res.status(200).send(prod);
-        } else {
-            res.status(404).send("Producto no existe")
-        }
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al consultar el producto: ${error}`)
-    }
-})
-
-productsRouter.post('/', async (req, res) => {
-    try {
-        const product= req.body
-        const prod = await productModel.create(product)
-        res.status(201).send(prod);
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al consultar el producto: ${error}`)
-    }
-})
-
-productsRouter.put('/:pid', async (req, res) => {
-    try {
-        const idProduct = req.params.pid
-        const updateProduct = req.body
-        const prod = await productModel.findByIdAndUpdate(idProduct, updateProduct)
-        res.status(200).send(prod)
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al actualizar el producto: ${error}`)
-    }
-})
-
-productsRouter.delete('/:pid', async (req, res) => {
-    try {
-        const idProduct = req.params.pid
-        const prod = await productModel.findByIdAndDelete(idProduct)
-        res.status(200).send(prod)
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al eliminar el producto: ${error}`)
-    }
-})
+productsRouter.delete('/:pid', passport.authenticate('jwt', { session: false }), deleteProduct)
 
 export default productsRouter;

@@ -1,124 +1,23 @@
-import cartModel from "../models/cart.js";
 import { Router } from "express";
+import passport from "passport";
+import { createCart, getCart, insertProductCart, createTicket, updateCart, updateQuantity, deleteProductCart, emptyCart } from "../controllers/cartController.js";
 
 const cartRouter = Router()
 
-//crear un carrito nuevo
-cartRouter.post('/', async (req, res) => {
-    try {
-        const cart = await cartModel.create({ products: [] })
-        res.status(201).send(cart)
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al crear el carrito: ${error}`)
-    }
-})
+cartRouter.post('/', createCart)
 
-//obtener un carrito por Id
-cartRouter.get('/:cid', async (req, res) => {
-    try {
-        const cartId = req.params.cid
-        const cart = await cartModel.findById(cartId).populate('products.id_prod')
-       
-        let productosProcesados = cart.products.map(producto => ({
-            title: producto.id_prod.title,
-            quantity: producto.quantity
-        }));
+cartRouter.get('/:cid', getCart)
 
-        res.status(200).render('templates/cart', {
-            productos: productosProcesados
-        })
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al consultar el carrito: ${error}`)
-    }
-})
+cartRouter.post('/:cid/:pid', passport.authenticate('jwt', { session: false }), insertProductCart)
 
-//agregar un producto al carrito o actualizar la cantidad de un producto
-cartRouter.post('/:cid/:pid', async (req, res) => {
-    try {
-        const cartId = req.params.cid
-        const productId = req.params.pid
-        let { quantity } = req.body
+cartRouter.put('/:cid', passport.authenticate('jwt', { session: false }), updateCart);
 
-        if (!quantity || isNaN(quantity)) {
-            quantity = 1;
-        }
+cartRouter.put('/:cid/:pid', passport.authenticate('jwt', { session: false }), updateQuantity)
 
-        const cart = await cartModel.findById(cartId)
+cartRouter.delete('/:cid/:pid', passport.authenticate('jwt', { session: false }), deleteProductCart)
 
-        const indice = cart.products.findIndex(product => product.id_prod == productId)
+cartRouter.delete('/:cid', passport.authenticate('jwt', { session: false }), emptyCart)
 
-        if (indice != -1) {
-            cart.products[indice].quantity += parseInt(quantity)
-        } else {
-            cart.products.push({ id_prod: productId, quantity: quantity })
-        }
-        const mensaje = await cartModel.findByIdAndUpdate(cartId, cart)
-        res.status(200).send(mensaje)
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al cargar el producto: ${error}`)
-    }
-})
-
-//actualizar el carrito
-cartRouter.put('/:cid', async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const { products } = req.body;
-        const cart = await cartModel.findByIdAndUpdate(cartId, { products }, { new: true });
-        res.status(200).send(cart);
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al actualizar el carrito: ${error}`);
-    }
-});
-
-//actualizar cantidad de un producto
-cartRouter.put('/:cid/:pid', async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const productId = req.params.pid;
-        let { quantity } = req.body;
-
-        if (!quantity || isNaN(quantity)) {
-            quantity = 1;
-        }
-
-        const cart = await cartModel.findById(cartId);
-        const index = cart.products.findIndex(product => product.id_prod.toString() === productId);
-        if (index !== -1) {
-            cart.products[index].quantity += parseInt(quantity);
-            await cart.save();
-            res.status(200).send(cart);
-        } else {
-            res.status(404).send('Producto no encontrado en el carrito');
-        }
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al actualizar la cantidad del producto: ${error}`);
-    }
-});
-
-//eliminar un producto del carrito
-cartRouter.delete('/:cid/:pid', async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const productId = req.params.pid;
-        const cart = await cartModel.findById(cartId);
-        cart.products = cart.products.filter(products => products.id_prod.toString() !== productId);
-        await cart.save();
-        res.status(200).send(cart);
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al eliminar el producto del carrito: ${error}`);
-    }
-});
-
-// Eliminar todos los productos del carrito
-cartRouter.delete('/:cid', async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const cart = await cartModel.findByIdAndUpdate(cartId, { products: [] }, { new: true });
-        res.status(200).send(cart);
-    } catch (error) {
-        res.status(500).send(`Error interno del servidor al eliminar todos los productos del carrito: ${error}`);
-    }
-});
+cartRouter.post('/:cid/purchase', createTicket)
 
 export default cartRouter;
