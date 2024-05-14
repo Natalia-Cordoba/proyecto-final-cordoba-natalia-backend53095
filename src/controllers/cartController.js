@@ -41,27 +41,17 @@ export const insertProductCart = async (req, res) => {
             const cartId = req.params.cid
             const productId = req.params.pid
             const { quantity } = req.body
+    
+            if (!quantity || isNaN(quantity)) {
+                quantity = 1;
+            }
+            
             const cart = await cartModel.findById(cartId)
-    
-            // if (!quantity || isNaN(quantity)) {
-            //     quantity = 1;
-            // }
-    
-            // const cart = await cartModel.findById(cartId)
-    
-            // const indice = cart.products.findIndex(product => product.id_prod == productId)
-    
-            // if (indice != -1) {
-            //     cart.products[indice].quantity += parseInt(quantity)
-            // } else {
-            //     cart.products.push({ id_prod: productId, quantity: quantity })
-            // }
-    
-            const indice = cart.products.findIndex(product => product.id_prod == productId)
+            const indice = cart.products.findIndex(product => product.id_prod.toString() === productId)
+        
     
             if (indice != -1) {
-                //Consultar Stock para ver cantidades
-                cart.products[indice].quantity = quantity //5 + 5 = 10, asigno 10 a quantity
+                cart.products[indice].quantity += parseInt(quantity) 
             } else {
                 cart.products.push({ id_prod: productId, quantity: quantity })
             }
