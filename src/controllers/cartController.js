@@ -157,18 +157,16 @@ export const createTicket = async (req, res) => {
                 }
             })
             if (prodSinStock.length == 0) {
-                const totalPrice = cart.products.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0)
-                const ticketData = {
+                const totalPrice = cart.products.reduce((a, b) => (a.price * a.quantity) + (b.price * b.quantity), 0)
+                const newTicket = await ticketModel.create({
                     code: crypto.randomUUID(),
                     purchaser: req.user.email,
                     amount: totalPrice,
-                    products: cart.products.map(prod => prod.id_prod)
-                }
-                const newTicket = await ticketModel.create(ticketData);
-                console.log(newTicket);
-                res.status(200).send("ticket creado correctamente:" + newTicket)
+                    products: cart.products
+                })
+                res.status(200).send("ticket creado correctamente:", newTicket)
             } else {
-                res.status(404).send("Estos productos no tienen stock:", prodSinStock)//Retornar productos sin stock
+                res.status(404).send("Estos productos no tienen stock:", prodSinStock)
             }
         } else {
             res.status(404).send("Carrito no existe")
