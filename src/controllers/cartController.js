@@ -148,7 +148,7 @@ export const createTicket = async (req, res) => {
     try {
         const cartId = req.params.cid
         const cart = await cartModel.findById(cartId)
-        const prodSinStock = []
+        let prodSinStock = []
         if (cart) {
             cart.products.forEach(async (prod) => {
                 let producto = await productModel.findById(prod.id_prod)
@@ -157,13 +157,14 @@ export const createTicket = async (req, res) => {
                 }
             })
             if (prodSinStock.length == 0) {
-                const totalPrice = cart.products.reduce((a, b) => (a.price * a.quantity) + (b.price * b.quantity), 0)
-                const newTicket = await ticketModel.create({
+                let totalPrice = cart.products.reduce((a, b) => (a.price * a.quantity) + (b.price * b.quantity), 0)
+                let newTicket = await ticketModel.create({
                     code: crypto.randomUUID(),
                     purchaser: req.user.email,
                     amount: totalPrice,
                     products: cart.products
                 })
+                await emptyCart(req, res)
                 res.status(200).send("ticket creado correctamente:", newTicket)
             } else {
                 res.status(404).send("Estos productos no tienen stock:", prodSinStock)
