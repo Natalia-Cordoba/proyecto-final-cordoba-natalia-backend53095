@@ -8,6 +8,8 @@ cartRouter.post('/', createCart)
 
 cartRouter.get('/:cid', getCart)
 
+cartRouter.get('/purchase/:cid',  passport.authenticate('jwt', { session: false }), createTicket)
+
 cartRouter.post('/:cid/:pid', passport.authenticate('jwt', { session: false }), insertProductCart)
 
 cartRouter.put('/:cid', passport.authenticate('jwt', { session: false }), updateCart);
@@ -18,6 +20,5 @@ cartRouter.delete('/:cid/:pid', passport.authenticate('jwt', { session: false })
 
 cartRouter.delete('/:cid', passport.authenticate('jwt', { session: false }), emptyCart)
 
-cartRouter.post('/:cid/purchase', createTicket)
 
 export default cartRouter;

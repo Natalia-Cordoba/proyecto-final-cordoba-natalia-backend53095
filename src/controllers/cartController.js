@@ -17,9 +17,6 @@ export const getCart = async (req, res) => {
     try {
         const cartId = req.params.cid
         const cart = await cartModel.findOne({ _id: cartId })
-        // res.status(200).send(cart)
-
-        // const cart = await cartModel.findById(cartId).populate('products.id_prod')
        
         let productosProcesados = cart.products.map(producto => ({
             title: producto.id_prod.title,
@@ -31,6 +28,54 @@ export const getCart = async (req, res) => {
         })
     } catch (error) {
         res.status(500).send(`Error interno del servidor al consultar carrito: ${error}`)
+    }
+}
+
+
+//generar ticket
+export const createTicket = async (req, res) => {
+    try {
+        // console.log(req.user)
+        const cartId = req.params.cid
+        const cart = await cartModel.findById(cartId)
+        let prodSinStock = []
+        if (cart) {
+            cart.products.forEach(async (prod) => {
+                let producto = await productModel.findById(prod.id_prod)
+                if (producto.stock - prod.quantity < 0) {
+                    prodSinStock.push(producto.id)
+                }
+            })
+            if (prodSinStock.length == 0) {
+                // const aux = [...cart.products]
+                // let totalPrice = cart.products.reduce((a, b) => (a.id_prod.price * a.quantity) + (b.id_prod.price * b.quantity), 0)
+                const newTicket = await ticketModel.create({
+                    code: crypto.randomUUID(),
+                    purchaser: req.user.email,
+                    amount: 5,
+                    products: cart.products
+                })
+                await cartModel.findByIdAndUpdate(cartId, {
+                    products: []
+                })
+                console.log(newTicket)
+                res.status(200).send(`Ticket creado correctamente: ${newTicket}`)
+            } else {
+                console.log(prodSinStock)
+                prodSinStock.forEach((prodId) => {
+                    cart.products = cart.products.filter(pro => pro.id_prod !== prodId)
+                })
+                await cartModel.findByIdAndUpdate(cartId, {
+                    products: cart.products
+                })
+                res.status(400).send(`Productos sin stock: ${prodSinStock}`)
+            }
+        } else {
+            res.status(404).send("Carrito no existe")
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
     }
 }
 
@@ -143,36 +188,4 @@ export const emptyCart = async (req, res) => {
     }
 }
 
-//generar ticket
-export const createTicket = async (req, res) => {
-    try {
-        const cartId = req.params.cid
-        const cart = await cartModel.findById(cartId)
-        let prodSinStock = []
-        if (cart) {
-            cart.products.forEach(async (prod) => {
-                let producto = await productModel.findById(prod.id_prod)
-                if (producto.stock - prod.quantity < 0) {
-                    prodSinStock.push(producto)
-                }
-            })
-            if (prodSinStock.length == 0) {
-                let totalPrice = cart.products.reduce((a, b) => (a.price * a.quantity) + (b.price * b.quantity), 0)
-                let newTicket = await ticketModel.create({
-                    code: crypto.randomUUID(),
-                    purchaser: req.user.email,
-                    amount: totalPrice,
-                    products: cart.products
-                })
-                await emptyCart(req, res)
-                res.status(200).send("ticket creado correctamente:", newTicket)
-            } else {
-                res.status(404).send("Estos productos no tienen stock:", prodSinStock)
-            }
-        } else {
-            res.status(404).send("Carrito no existe")
-        }
-    } catch (error) {
-        res.status(500).send(error)
-    }
-}
+
