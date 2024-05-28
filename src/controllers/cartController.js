@@ -55,12 +55,17 @@ export const createTicket = async (req, res) => {
                 }
             })
             if (prodSinStock.length == 0) {
-                // const aux = [...cart.products]
+                let totalPrice = 0;
+    for (const prod of cart.products) {
+        let producto = await productModel.findById(prod.id_prod);
+        totalPrice += producto.price * prod.quantity;
+    }
+
                 // let totalPrice = cart.products.reduce((a, b) => (a.id_prod.price * a.quantity) + (b.id_prod.price * b.quantity), 0)
                 const newTicket = await ticketModel.create({
                     code: crypto.randomUUID(),
                     purchaser: req.user.email,
-                    amount: 5,
+                    amount: totalPrice,
                     products: cart.products
                 })
                 await cartModel.findByIdAndUpdate(cartId, {

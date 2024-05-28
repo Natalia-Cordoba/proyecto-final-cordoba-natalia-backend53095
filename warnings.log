@@ -16,3 +16,12 @@ warning: Este es un mensaje de warning
 fatal: Este es un mensaje de fatal
 error: Este es un mensaje de error
 warning: Este es un mensaje de warning
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 27/5/2024 23:32:13: Cannot read properties of undefined (reading 'price')
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 27/5/2024 23:37:46: ticket validation failed: amount: Cast to Number failed for value "NaN" (type number) at path "amount"
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 27/5/2024 23:38:01: ticket validation failed: amount: Cast to Number failed for value "NaN" (type number) at path "amount"
+error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bee780fe61b058f21e702 - 27/5/2024 23:40:28: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bef510fe61b058f21e70b - 27/5/2024 23:40:59: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bee780fe61b058f21e702 - 27/5/2024 23:41:58: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bef510fe61b058f21e70b - 27/5/2024 23:42:05: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bef510fe61b058f21e70b - 27/5/2024 23:42:41: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/665542119acf1ca828a0fd31 - 27/5/2024 23:45:59: No se encontró el producto que buscas
