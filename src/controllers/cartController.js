@@ -6,9 +6,9 @@ import ticketModel from "../models/ticket.js";
 export const createCart = async (req, res) => {
     try {
         const cart = await cartModel.create({ products: [] })
-        
+
         req.logger.info("Carrito creado correctamente")
-        
+
         res.status(201).send(cart)
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
@@ -22,7 +22,7 @@ export const getCart = async (req, res) => {
     try {
         const cartId = req.params.cid
         const cart = await cartModel.findOne({ _id: cartId })
-       
+
         let productosProcesados = cart.products.map(producto => ({
             title: producto.id_prod.title,
             quantity: producto.quantity
@@ -56,12 +56,12 @@ export const createTicket = async (req, res) => {
             })
             if (prodSinStock.length == 0) {
                 let totalPrice = 0;
-    for (const prod of cart.products) {
-        let producto = await productModel.findById(prod.id_prod);
-        totalPrice += producto.price * prod.quantity;
-    }
 
-                // let totalPrice = cart.products.reduce((a, b) => (a.id_prod.price * a.quantity) + (b.id_prod.price * b.quantity), 0)
+                for (const prod of cart.products) {
+                    let producto = await productModel.findById(prod.id_prod);
+                    totalPrice += producto.price * prod.quantity;
+                }
+
                 const newTicket = await ticketModel.create({
                     code: crypto.randomUUID(),
                     purchaser: req.user.email,
@@ -71,7 +71,7 @@ export const createTicket = async (req, res) => {
                 await cartModel.findByIdAndUpdate(cartId, {
                     products: []
                 })
-                
+
                 req.logger.info(`Ticket creado correctamente: ${newTicket}`)
 
                 res.status(200).send(`Ticket creado correctamente: ${newTicket}`)
@@ -105,17 +105,17 @@ export const insertProductCart = async (req, res) => {
             const cartId = req.params.cid
             const productId = req.params.pid
             const { quantity } = req.body
-    
+
             if (!quantity || isNaN(quantity)) {
                 quantity = 1;
             }
-            
+
             const cart = await cartModel.findById(cartId)
             const indice = cart.products.findIndex(product => product.id_prod.toString() === productId)
-        
-    
+
+
             if (indice != -1) {
-                cart.products[indice].quantity += parseInt(quantity) 
+                cart.products[indice].quantity += parseInt(quantity)
             } else {
                 cart.products.push({ id_prod: productId, quantity: quantity })
             }
@@ -166,7 +166,7 @@ export const updateQuantity = async (req, res) => {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             let { quantity } = req.body;
-    
+
             if (!quantity || isNaN(quantity)) {
                 quantity = 1;
             }
@@ -189,7 +189,7 @@ export const updateQuantity = async (req, res) => {
 
             res.status(403).send("Usuario no autorizado")
         }
-       
+
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
 
