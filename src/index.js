@@ -11,7 +11,7 @@ import initializePassport from './config/passport/passport.js';
 import { engine } from 'express-handlebars';
 import { __dirname } from './path.js';
 import { Server } from 'socket.io';
-
+import { addLogger } from './utils/logger.js';
 
 //Configuraciones o declaraciones 
 const app = express()
@@ -51,6 +51,9 @@ app.set('views', __dirname + '/views')
 initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
+
+//logger
+app.use(addLogger)
 
 //routes
 app.use('/', indexRouter)

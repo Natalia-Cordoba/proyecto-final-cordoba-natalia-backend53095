@@ -23,14 +23,18 @@ export const createRandomProduct = async (req, res) => {
 
         await productModel.insertMany(products)
 
-        res.status(201).send(products)
-        console.log(products)
+        req.logger.info(`Los 100 productos se crearon correctamente: ${products}`)
 
+        res.status(201).send(products)
     } else {
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
         res.status(403).send("Usuario no autorizado")
     }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al crear los 100 productos: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al crear los 100 productos")
     }
 }
 

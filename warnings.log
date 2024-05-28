@@ -1,0 +1,18 @@
+error: Metodo: GET en ruta /664bee280f58f21e6fd - 27/5/2024 22:25:42: Cast to ObjectId failed for value "664bee280f58f21e6fd" (type string) at path "_id" for model "products"
+error: Metodo: DELETE en ruta /6642be64407375ae2dd000aa - 27/5/2024 22:27:13: Usuario no autorizado
+error: Error al generar logs: colors[Colorizer.allColors[lookup]] is not a function
+error: Error al generar logs: colors[Colorizer.allColors[lookup]] is not a function
+error: Error al generar logs: colors[Colorizer.allColors[lookup]] is not a function
+fatal: Este es un mensaje de fatal
+fatal: Este es un mensaje de fatal
+fatal: Este es un mensaje de fatal
+error: Metodo: GET en ruta /65ef06636979d967b5d9aa14 - 27/5/2024 23:18:46: El producto que buscas no existe
+fatal: Este es un mensaje de fatal
+error: Este es un mensaje de error
+warning: Este es un mensaje de warning
+fatal: Este es un mensaje de fatal
+error: Este es un mensaje de error
+warning: Este es un mensaje de warning
+fatal: Este es un mensaje de fatal
+error: Este es un mensaje de error
+warning: Este es un mensaje de warning

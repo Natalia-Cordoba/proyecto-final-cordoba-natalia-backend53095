@@ -6,9 +6,14 @@ import ticketModel from "../models/ticket.js";
 export const createCart = async (req, res) => {
     try {
         const cart = await cartModel.create({ products: [] })
+        
+        req.logger.info("Carrito creado correctamente")
+        
         res.status(201).send(cart)
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al crear carrito: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al crear carrito")
     }
 }
 
@@ -23,11 +28,15 @@ export const getCart = async (req, res) => {
             quantity: producto.quantity
         }));
 
+        req.logger.info("Carrito obtenido correctamente")
+
         res.status(200).render('templates/cart', {
             productos: productosProcesados
         })
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al consultar carrito: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al consultar carrito")
     }
 }
 
@@ -35,7 +44,6 @@ export const getCart = async (req, res) => {
 //generar ticket
 export const createTicket = async (req, res) => {
     try {
-        // console.log(req.user)
         const cartId = req.params.cid
         const cart = await cartModel.findById(cartId)
         let prodSinStock = []
@@ -58,24 +66,30 @@ export const createTicket = async (req, res) => {
                 await cartModel.findByIdAndUpdate(cartId, {
                     products: []
                 })
-                console.log(newTicket)
+                
+                req.logger.info(`Ticket creado correctamente: ${newTicket}`)
+
                 res.status(200).send(`Ticket creado correctamente: ${newTicket}`)
             } else {
-                console.log(prodSinStock)
                 prodSinStock.forEach((prodId) => {
                     cart.products = cart.products.filter(pro => pro.id_prod !== prodId)
                 })
                 await cartModel.findByIdAndUpdate(cartId, {
                     products: cart.products
                 })
+                req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Algunos productos no tienen stock`)
+
                 res.status(400).send(`Productos sin stock: ${prodSinStock}`)
             }
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: El carrito que buscas no exite`)
+
             res.status(404).send("Carrito no existe")
         }
     } catch (error) {
-        console.log(error)
-        res.status(500).send(error)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al crear ticket")
     }
 }
 
@@ -100,13 +114,20 @@ export const insertProductCart = async (req, res) => {
             } else {
                 cart.products.push({ id_prod: productId, quantity: quantity })
             }
-            const mensaje = await cartModel.findByIdAndUpdate(cartId, cart)
-            res.status(200).send(mensaje)
+            const carrito = await cartModel.findByIdAndUpdate(cartId, cart)
+
+            req.logger.info("Producto/s agregado/s correctamente al carrito")
+
+            res.status(200).send(carrito)
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al agregar producto: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al agregar producto")
     }
 }
 
@@ -117,12 +138,19 @@ export const updateCart = async (req, res) => {
             const cartId = req.params.cid;
             const { products } = req.body;
             const cart = await cartModel.findByIdAndUpdate(cartId, { products }, { new: true });
+
+            req.logger.info("Carrito actualizado correctamente")
+
             res.status(200).send(cart);
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al actualizar el carrito: ${error}`);
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al actualizar el carrito");
     }
 }
 
@@ -142,16 +170,25 @@ export const updateQuantity = async (req, res) => {
             if (index !== -1) {
                 cart.products[index].quantity += parseInt(quantity);
                 await cart.save();
+
+                req.logger.info("Cantidad actualizada correctamente")
+
                 res.status(200).send(cart);
             } else {
+                req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: No se encontró el producto que buscas`)
+
                 res.status(404).send('Producto no encontrado en el carrito');
             }
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
        
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al actualizar la cantidad del producto: ${error}`);
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al actualizar la cantidad del producto");
     }
 };
 
@@ -164,12 +201,19 @@ export const deleteProductCart = async (req, res) => {
             const cart = await cartModel.findById(cartId);
             cart.products = cart.products.filter(products => products.id_prod.toString() !== productId);
             await cart.save();
+
+            req.logger.info("Producto eliminado del carrito")
+
             res.status(200).send(cart);
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             req.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al eliminar el producto del carrito: ${error}`);
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al eliminar el producto del carrito");
     }
 }
 
@@ -179,12 +223,19 @@ export const emptyCart = async (req, res) => {
         if (req.user.rol == "User") {
             const cartId = req.params.cid;
             const cart = await cartModel.findByIdAndUpdate(cartId, { products: [] }, { new: true });
+
+            req.logger.info("Carrito vaciado correctamente")
+
             res.status(200).send(cart);
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al eliminar todos los productos del carrito: ${error}`);
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al eliminar todos los productos del carrito");
     }
 }
 

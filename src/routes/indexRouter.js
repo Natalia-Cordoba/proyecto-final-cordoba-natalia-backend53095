@@ -8,6 +8,7 @@ import express from 'express';
 import { __dirname } from '../path.js';
 import { createRandomProduct } from '../utils/mocking.js';
 import passport from 'passport';
+import { loggerTest } from '../utils/logger.js';
 
 const indexRouter = express.Router()
 
@@ -18,12 +19,13 @@ indexRouter.get('/', (req, res) => {
 
 indexRouter.use('/public', express.static(__dirname + '/public'))
 indexRouter.use('/upload', multerRouter)
-indexRouter.use ('/api/products', productsRouter, express.static(__dirname + '/public'))
-indexRouter.use ('/api/cart', cartRouter, express.static(__dirname + '/public'))
-indexRouter.use ('/api/chat', chatRouter, express.static(__dirname + '/public'))
-indexRouter.use ('/api/users', userRouter)
-indexRouter.use ('/api/session', sessionRouter)
+indexRouter.use('/api/products', productsRouter, express.static(__dirname + '/public'))
+indexRouter.use('/api/cart', cartRouter, express.static(__dirname + '/public'))
+indexRouter.use('/api/chat', chatRouter, express.static(__dirname + '/public'))
+indexRouter.use('/api/users', userRouter)
+indexRouter.use('/api/session', sessionRouter)
 
 indexRouter.get('/api/mockingproducts', passport.authenticate('jwt', { session: false }), createRandomProduct);
 
+indexRouter.get('/api/loggerTest', loggerTest)
 export default indexRouter;

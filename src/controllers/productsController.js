@@ -21,16 +21,17 @@ export const getProducts = async (req, res) => {
         const prods = await productModel.paginate(query, { limit: limi, page: pag, sort: ordQuery });
 
         const productos = prods.docs.map(producto => producto.toObject());
-        console.log(prods)
+
+        req.logger.info(`Productos obtenidos con éxito: ${prods}`)
+
         res.status(200).render('templates/index', {
             mostrarProductos: true,
             productos: productos,
             css: 'index.css',
         })
 
-        // res.status(200).send(prods)
-
     } catch (error) {
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}. Error al obtener productos: ${error.message}`)
         res.status(500).render('templates/error', {
             error: error,
         });
@@ -43,12 +44,19 @@ export const getProduct = async (req, res) => {
     try {
         const idProducto = req.params.pid 
         const prod = await productModel.findById(idProducto)
-        if (prod)
+        if (prod) {
+            req.logger.info("Producto encontrado")
+
             res.status(200).send(prod)
-        else
+        } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: El producto que buscas no existe`)
+
             res.status(404).send("Producto no existe")
+        }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al consultar producto: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al consultar producto")
     }
 }
 
@@ -58,12 +66,19 @@ export const createProduct = async (req, res) => {
         if (req.user.rol == "Admin") {
             const product = req.body
             const prod = await productModel.create(product)
+
+            req.logger.info("Producto creado correctamente")
+
             res.status(201).send(prod)
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al crear producto: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al crear producto")
     }
 }
 
@@ -74,12 +89,19 @@ export const updateProduct = async (req, res) => {
             const idProducto = req.params.pid
             const updateProduct = req.body
             const prod = await productModel.findByIdAndUpdate(idProducto, updateProduct)
+
+            req.logger.info("Producto actualizado correctamente")
+
             res.status(200).send(prod)    
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al actualizar producto: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send("Error interno del servidor al actualizar producto")
     }
 }
 
@@ -89,11 +111,17 @@ export const deleteProduct = async (req, res) => {
         if (req.user.rol == "Admin") {
             const idProducto = req.params.pid
             const prod = await productModel.findByIdAndDelete(idProducto)
+            
+            req.logger.info("Producto eliminado correctamente")
             res.status(200).send(prod)
         } else {
+            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
             res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
-        res.status(500).send(`Error interno del servidor al eliminar producto: ${error}`)
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+        res.status(500).send(`Error interno del servidor al eliminar producto`)
     }
 }
