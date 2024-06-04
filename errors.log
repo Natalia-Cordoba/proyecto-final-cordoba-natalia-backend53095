@@ -28,3 +28,12 @@ error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bee780fe61b058f21e702 - 
 error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bef510fe61b058f21e70b - 27/5/2024 23:42:05: No se encontró el producto que buscas
 error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/664bef510fe61b058f21e70b - 27/5/2024 23:42:41: No se encontró el producto que buscas
 error: Metodo: PUT en ruta /6642be64407375ae2dd000aa/665542119acf1ca828a0fd31 - 27/5/2024 23:45:59: No se encontró el producto que buscas
+error: Metodo: GET en ruta /6642be64407375ae2dd000a9 - 3/6/2024 21:54:25: Cannot read properties of null (reading 'products')
+error: Metodo: GET en ruta /6642be64407375ae2dd000a9 - 3/6/2024 21:54:40: Cannot read properties of null (reading 'products')
+error: Metodo: GET en ruta /6642be64407375ae2dd000a9 - 3/6/2024 21:54:59: Cannot read properties of null (reading 'products')
+error: Metodo: GET en ruta /6642be64407375ae2dd000a9 - 3/6/2024 21:55:23: Cannot read properties of null (reading 'products')
+error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 21:56:37: Usuario no autorizado
+error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 21:56:54: Usuario no autorizado
+error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 21:57:32: Usuario no autorizado
+error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 22:05:19: Assignment to constant variable.
+error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 22:10:02: Assignment to constant variable.

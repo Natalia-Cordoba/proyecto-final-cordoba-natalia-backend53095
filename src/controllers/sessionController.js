@@ -76,7 +76,7 @@ export const testJWT = async (req, res) => {
     // console.log("Desde testJWT" + req.user)
     req.logger.info(`Desde testJWT: ${req.user}`)
     
-    if (req.user.rol == "User") {
+    if (req.user.rol == "User" || req.user.rol == "UserPremium") {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
 
         res.status(403).send("Usuario no autorizado")

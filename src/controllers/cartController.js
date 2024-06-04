@@ -60,11 +60,11 @@ export const createTicket = async (req, res) => {
                 for (const prod of cart.products) {
                     let producto = await productModel.findById(prod.id_prod);
                     totalPrice += producto.price * prod.quantity;
-                }
-
-                if (req.user.role === 'UserPremium') {
-                    //aplicar 10% de descuento
-                    totalPrice *= 0.9 
+                    
+                    if (req.user.role == 'UserPremium') {
+                        //aplicar 10% de descuento
+                        totalPrice *= 0.9 
+                    }
                 }
 
                 const newTicket = await ticketModel.create({
@@ -106,7 +106,7 @@ export const createTicket = async (req, res) => {
 //ingresar productos al carrito
 export const insertProductCart = async (req, res) => {
     try {
-        if (req.user.rol == "User") {
+        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
             const cartId = req.params.cid
             const productId = req.params.pid
             const { quantity } = req.body
@@ -144,7 +144,7 @@ export const insertProductCart = async (req, res) => {
 //actualizar el carrito
 export const updateCart = async (req, res) => {
     try {
-        if (req.user.rol == "User") {
+        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
             const cartId = req.params.cid;
             const { products } = req.body;
             const cart = await cartModel.findByIdAndUpdate(cartId, { products }, { new: true });
@@ -167,7 +167,7 @@ export const updateCart = async (req, res) => {
 //actualizar la cantidad de un producto
 export const updateQuantity = async (req, res) => {
     try {
-        if (req.user.rol == "User") {
+        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             let { quantity } = req.body;
@@ -205,7 +205,7 @@ export const updateQuantity = async (req, res) => {
 //eliminar un producto del carrito
 export const deleteProductCart = async (req, res) => {
     try {
-        if (req.user.rol == "User") {
+        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             const cart = await cartModel.findById(cartId);
@@ -230,7 +230,7 @@ export const deleteProductCart = async (req, res) => {
 //vaciar el carrito
 export const emptyCart = async (req, res) => {
     try {
-        if (req.user.rol == "User") {
+        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
             const cartId = req.params.cid;
             const cart = await cartModel.findByIdAndUpdate(cartId, { products: [] }, { new: true });
 

@@ -9,7 +9,8 @@ const varenv = {
     jwt_secret: process.env.JWT_SECRET,
     salt: process.env.SALT,
     client_ID: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET
+    client_secret: process.env.CLIENT_SECRET,
+    password_app: process.env.PASSWORD_APP
 }
 
 export default varenv

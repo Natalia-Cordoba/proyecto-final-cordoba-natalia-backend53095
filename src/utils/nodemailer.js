@@ -1,12 +1,15 @@
 import nodemailer from 'nodemailer';
+import varenv from '../dotenv.js'
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    // port: 587,
     auth: {
         user: 'michhi.2810@gmail.com',
-        password: ''
+        pass: varenv.password_app
     },
+    tls: {
+        rejectUnauthorized: false
+    }
 })
 
 export const sendEmailChangePassword = async (email, linkChangePassword) => {
