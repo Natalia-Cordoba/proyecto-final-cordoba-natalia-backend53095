@@ -107,12 +107,12 @@ export const changePassword = async (req, res) => {
             //usuario no existe
             res.status(404).send('Usuario no encontrado')
         }
-    } catch (error) {
-        console.log(error)
-        if(error?.message == 'jwt expired') {
+    } catch (e) {
+        console.log(e)
+        if(e?.message == 'jwt expired') {
             res.status(400).send('Expiró el tiempo máximo para recuperar la contraseña. Se enviará un nuevo correo para cambiarla')
         }
-        res.status(500).send(error)
+        res.status(500).send(e)
     }
 }
 
@@ -121,7 +121,7 @@ export const sendEmailPassword = async (req, res) => {
         const { email } = req.body
         const user = await userModel.find({ email: email }) 
         if(user) {
-            const token = jwt.sign({ userEmail: email }, "coderhouse", { expiresIn: '3m' })
+            const token = jwt.sign({ userEmail: email }, "coderhouse", { expiresIn: '2m' })
             const resetLink = `http://localhost:8080/api/session/reset-password?token=${token}`
             sendEmailChangePassword(email, resetLink)
             res.status(200).send('Email enviado correctamente')

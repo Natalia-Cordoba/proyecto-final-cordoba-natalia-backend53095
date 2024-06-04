@@ -4,7 +4,7 @@ import varenv from '../dotenv.js'
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'michhi.2810@gmail.com',
+        user: 'nataliacorrdoba@gmail.com',
         pass: varenv.password_app
     },
     tls: {
@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 export const sendEmailChangePassword = async (email, linkChangePassword) => {
     const mailOption = {
-        from: 'michhi.2810@gmail.com',
+        from: 'nataliacorrdoba@gmail.com',
         to: email,
         subject: 'Recuperación de contraseña',
         html: 
