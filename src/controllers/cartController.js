@@ -62,6 +62,11 @@ export const createTicket = async (req, res) => {
                     totalPrice += producto.price * prod.quantity;
                 }
 
+                if (req.user.role === 'UserPremium') {
+                    //aplicar 10% de descuento
+                    totalPrice *= 0.9 
+                }
+
                 const newTicket = await ticketModel.create({
                     code: crypto.randomUUID(),
                     purchaser: req.user.email,

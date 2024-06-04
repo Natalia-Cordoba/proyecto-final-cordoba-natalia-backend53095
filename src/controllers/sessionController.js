@@ -1,4 +1,7 @@
-import passport from "passport";
+import userModel from '../models/user.js';
+import { sendEmailChangePassword } from "../utils/nodemailer.js";
+import jwt from 'jsonwebtoken';
+import { validatePassword, createHash } from '../utils/bcrypt.js';
 
 export const login = async (req, res) => {
     try {
@@ -82,3 +85,52 @@ export const testJWT = async (req, res) => {
 
         res.status(200).send(req.user)
 }
+
+export const changePassword = async (req, res) => {
+    const { token } = req.params
+    const { newPassword } = req.body
+    try {
+        const validateToken = jwt.verify(token.substr(6,), 'coderhouse')
+        const user = await userModel.findOne({ email: validateToken.userEmail })
+        if (user) {
+            if (!validatePassword(newPassword, user.password)) {
+                const hashPassword = createHash(newPassword)
+                user.password = hashPassword
+                const resultado = await userModel.findByIdAndUpdate(user._id, user)
+                console.log(resultado)
+                res.status(200).send('Contraseña modificada correctamente')
+            } else {
+                //contraseñas iguales
+                res.status(200).send('La nueva contraseña no puede ser identica a la anterior')
+            }
+        } else {
+            //usuario no existe
+            res.status(404).send('Usuario no encontrado')
+        }
+    } catch (error) {
+        console.log(error)
+        if(error?.message == 'jwt expired') {
+            res.status(400).send('Expiró el tiempo máximo para recuperar la contraseña. Se enviará un nuevo correo para cambiarla')
+        }
+        res.status(500).send(error)
+    }
+}
+
+export const sendEmailPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+        const user = await userModel.find({ email: email }) 
+        if(user) {
+            const token = jwt.sign({ userEmail: email }, "coderhouse", { expiresIn: '3m' })
+            const resetLink = `http://localhost:8080/api/session/reset-password?token=${token}`
+            sendEmailChangePassword(email, resetLink)
+            res.status(200).send('Email enviado correctamente')
+        } else {
+            res.status(404).send('Usuario no encontrado')   
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+}
+        
