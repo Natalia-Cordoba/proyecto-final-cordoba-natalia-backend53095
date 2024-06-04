@@ -67,13 +67,11 @@ export const sessionGithub = async (req, res) => {
 }
 
 export const current = (req, res) => {
-    // console.log(req)
     req.logger.info("Información del usuario logueado")
     res.status(200).send("Usuario logueado")
 }
 
 export const testJWT = async (req, res) => {
-    // console.log("Desde testJWT" + req.user)
     req.logger.info(`Desde testJWT: ${req.user}`)
     
     if (req.user.rol == "User" || req.user.rol == "UserPremium") {

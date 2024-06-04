@@ -37,3 +37,9 @@ error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 -
 error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 21:57:32: Usuario no autorizado
 error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 22:05:19: Assignment to constant variable.
 error: Metodo: POST en ruta /6642be64407375ae2dd000aa/664befa60fe61b058f21e710 - 3/6/2024 22:10:02: Assignment to constant variable.
+error: Metodo: POST en ruta /6642be64407375ae2dd000a9/664bec7e307ca2c77ecad089 - 4/6/2024 10:01:02: Cannot read properties of null (reading 'products')
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:01:57: user is not defined
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:05:48: Cannot access 'user' before initialization
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:06:29: Cannot access 'user' before initialization
+error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:07:33: user is not defined
+error: Metodo: POST en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:24:41: Cast to ObjectId failed for value "purchase" (type string) at path "_id" for model "carts"

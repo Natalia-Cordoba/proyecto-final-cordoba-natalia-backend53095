@@ -1,6 +1,7 @@
 import cartModel from "../models/cart.js";
 import productModel from "../models/product.js";
 import ticketModel from "../models/ticket.js";
+import userModel from "../models/user.js";
 
 //crear carrito
 export const createCart = async (req, res) => {
@@ -46,6 +47,13 @@ export const createTicket = async (req, res) => {
     try {
         const cartId = req.params.cid
         const cart = await cartModel.findById(cartId)
+        const user = await userModel.findById(req.user._id)
+
+        if (!user) {
+            req.logger.error(`Usuario no encontrado`);
+            return res.status(404).send("Usuario no encontrado");
+        }
+        
         let prodSinStock = []
         if (cart) {
             cart.products.forEach(async (prod) => {
@@ -56,15 +64,15 @@ export const createTicket = async (req, res) => {
             })
             if (prodSinStock.length == 0) {
                 let totalPrice = 0;
-
+                
                 for (const prod of cart.products) {
                     let producto = await productModel.findById(prod.id_prod);
                     totalPrice += producto.price * prod.quantity;
-                    
-                    if (req.user.role == 'UserPremium') {
-                        //aplicar 10% de descuento
-                        totalPrice *= 0.9 
-                    }
+                }
+
+                if (user.rol == 'UserPremium') {
+                    //aplicar 10% de descuento
+                    totalPrice *= 0.9
                 }
 
                 const newTicket = await ticketModel.create({
