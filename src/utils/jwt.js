@@ -17,12 +17,14 @@ console.log(generateToken({
     "email": "tadeo@example.com",
     "rol": "User",
     "cart_id": {
-    "_id": "6642be64407375ae2dd000aa",
-    "products": [],
-    "__v": 0
+        "_id": "6642be64407375ae2dd000aa",
+        "products": [],
+        "__v": 0
     },
     "__v": 0
 }))
+
+
 
 // console.log(generateToken({
 // "_id": "661ffef55768fc9097bc79c8",

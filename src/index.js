@@ -8,6 +8,8 @@ import varenv from './dotenv.js'
 import messageModel from "./models/messages.js";
 import indexRouter from "./routes/indexRouter.js";
 import initializePassport from './config/passport/passport.js';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
 import { engine } from 'express-handlebars';
 import { __dirname } from './path.js';
 import { Server } from 'socket.io';
@@ -30,6 +32,19 @@ mongoose.connect(varenv.mongo_url)
 .then(() => console.log("DB is connected"))
 .catch(error => console.log(error))
 
+const swaggerOptions = {
+    definition: {
+        openapi: '3.1.0',
+        info: {
+            title: 'Documentacion de la aplicacion',
+            description: 'Descripcion de la documentacion'
+        },
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+
 //Middlewares
 //Permito a express ejecutar JSON
 app.use(express.json())
@@ -43,6 +58,7 @@ app.use(session({
     saveUninitialized: true
 }))
 app.use(cookieParser(varenv.cookies_secret))
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
 app.set('views', __dirname + '/views')
