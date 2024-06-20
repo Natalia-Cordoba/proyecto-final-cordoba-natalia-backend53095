@@ -35,7 +35,8 @@ export const register = async (req, res) => {
         }
         req.logger.info("Usuario registrado correctamente")
 
-        res.status(200).send("Usuario creado correctamente")
+        // res.status(200).send("Usuario creado correctamente")
+        res.status(200).json({ payload: req.user })
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
 
