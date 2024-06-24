@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "mocha test/supertest.test.js"
+    "testSession": "mocha test/session.test.js",
+    "testProduct": "mocha test/products.test.js",
+    "testCart": "mocha test/cart.test.js"
   },
   "keywords": [],
   "author": "",

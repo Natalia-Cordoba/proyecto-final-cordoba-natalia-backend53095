@@ -40,3 +40,4 @@ error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:05:4
 error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:06:29: Cannot access 'user' before initialization
 error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:07:33: user is not defined
 error: Metodo: POST en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:24:41: Cast to ObjectId failed for value "purchase" (type string) at path "_id" for model "carts"
+error: Metodo: POST en ruta / - 23/6/2024 22:20:14: E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "EIF-BS" }
