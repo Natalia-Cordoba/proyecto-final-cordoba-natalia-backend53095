@@ -71,7 +71,7 @@ describe('Test de Productos en la ruta api/products', function () {
 
         const id = '664bec7e307ca2c77ecad089'
         const updateProduct = {
-            price: 25000
+            price: 19700
         }
         const { statusCode } = await requester
             .put(`/api/products/${id}`)
@@ -85,7 +85,7 @@ describe('Test de Productos en la ruta api/products', function () {
     it('Ruta: api/products metodo DELETE', async () => {
         const token = generateAdminToken()
 
-        const id = '6678bc750dfd5426147b5a2b'
+        const id = '6678e31f53ca937623fdf50a'
 
         const { statusCode } = await requester
             .delete(`/api/products/${id}`)
