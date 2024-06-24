@@ -226,7 +226,7 @@ export const deleteProductCart = async (req, res) => {
         } else {
             req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
 
-            req.status(403).send("Usuario no autorizado")
+            res.status(403).send("Usuario no autorizado")
         }
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)

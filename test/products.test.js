@@ -71,7 +71,7 @@ describe('Test de Productos en la ruta api/products', function () {
 
         const id = '664bec7e307ca2c77ecad089'
         const updateProduct = {
-            price: 24000
+            price: 25000
         }
         const { statusCode } = await requester
             .put(`/api/products/${id}`)

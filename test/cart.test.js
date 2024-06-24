@@ -11,7 +11,7 @@ await mongoose.connect(varenv.mongo_url)
 
 const requester = supertest('http://localhost:8080')
 
-const generateAdminToken = () => {
+const generateUserToken = () => {
 
     const secret = varenv.jwt_secret;
     const payload = {
@@ -35,7 +35,7 @@ describe('Test de Carritos en la ruta api/cart', function () {
         const crearCarrito = await requester.post('/api/cart').send(newCart)
        
         expect(crearCarrito.status).to.be.equal(201)
-        expect(crearCarrito.body).to.be.an('object')
+        expect(crearCarrito.body.products).to.be.an('array').that.is.empty
     })
 
     it('Ruta: api/cart/:cid metodo GET', async () => {
@@ -47,5 +47,33 @@ describe('Test de Carritos en la ruta api/cart', function () {
         expect(buscarCarrito.body).to.be.an('object')
     })
 
+    it('Ruta: api/cart/:cid/:pid metodo POST', async () => {
+        const token = generateUserToken()
+
+        const cartId = '6642bea1407375ae2dd000b0'
+        const productId = '664beee50fe61b058f21e708'
+        const quantity = 1
+
+        const {statusCode, _body} = await requester
+            .post(`/api/cart/${cartId}/${productId}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ quantity })
+
+        expect(statusCode).to.be.equal(200)
+        expect(_body).to.be.an('object')
+        expect(_body.products).to.be.an('array').that.is.not.empty
+    })
+
+    it('Ruta: api/cart/:cid metodo DELETE', async () => {
+        const token = generateUserToken()
+
+        const cartId = '6642bea1407375ae2dd000b0'
     
+        const vaciarCarrito = await requester
+            .delete(`/api/cart/${cartId}`)
+            .set('Authorization', `Bearer ${token}`)
+    
+        expect(vaciarCarrito.status).to.be.equal(200)
+        expect(vaciarCarrito.body.products).to.be.an('array').that.is.empty
+    })
 })

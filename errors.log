@@ -44,3 +44,10 @@ error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:06:2
 error: Metodo: GET en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:07:33: user is not defined
 error: Metodo: POST en ruta /purchase/6642be64407375ae2dd000aa - 4/6/2024 10:24:41: Cast to ObjectId failed for value "purchase" (type string) at path "_id" for model "carts"
 error: Metodo: POST en ruta / - 23/6/2024 22:20:14: E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "EIF-BS" }
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:16:37: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:18:28: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:21:20: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:23:48: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:29:12: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:29:20: No se encontró el producto que buscas
+error: Metodo: PUT en ruta /6642bea1407375ae2dd000b0/664beee50fe61b058f21e708 - 23/6/2024 23:35:39: No se encontró el producto que buscas
