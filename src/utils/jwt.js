@@ -8,42 +8,43 @@ export const generateToken = (user) => {
     return token
 }
 
+
 console.log(generateToken({
-    "_id": "6642bea1407375ae2dd000af",
-    "first_name": "Felix",
-    "last_name": "Fernandez",
-    "age": 73,
-    "password": "$2b$12$GqhTLoWSFIp8qzGbapI2pu9zPciYmW0Fp6kJT8i/kNBT15SykVDnO",
-    "email": "felix@example.com",
-    "rol": "User",
-    "cart_id": {
-        "_id": "6642bea1407375ae2dd000b0",
-        "products": [
-            {
-                "id_prod": "664beee50fe61b058f21e708",
-                "quantity": 1,
-                "_id": "6678d6345f4f506073f66afa"
-            }
-        ],
-        "__v": 0
-    },
+"_id": "661ffef55768fc9097bc79c8",
+"first_name": "Emily",
+"last_name": "Emerson",
+"age": 25,
+"password": "$2b$12$puCRtL7PC1Xz8QGgM5XZUeUaHkWZYZoHrqh4S.i8xFLE7qjmjXzEq",
+"email": "adminCoder@coder.com",
+"rol": "Admin",
+"cart_id": {
+    "_id": "661ffef55768fc9097bc79c9",
+    "products": [],
     "__v": 0
+},
+"__v": 0
 }))
 
 
-
 // console.log(generateToken({
-// "_id": "661ffef55768fc9097bc79c8",
-// "first_name": "Emily",
-// "last_name": "Emerson",
-// "age": 25,
-// "password": "$2b$12$puCRtL7PC1Xz8QGgM5XZUeUaHkWZYZoHrqh4S.i8xFLE7qjmjXzEq",
-// "email": "adminCoder@coder.com",
-// "rol": "Admin",
-// "cart_id": {
-//     "_id": "661ffef55768fc9097bc79c9",
-//     "products": [],
+//     "_id": "6642bea1407375ae2dd000af",
+//     "first_name": "Felix",
+//     "last_name": "Fernandez",
+//     "age": 73,
+//     "password": "$2b$12$GqhTLoWSFIp8qzGbapI2pu9zPciYmW0Fp6kJT8i/kNBT15SykVDnO",
+//     "email": "felix@example.com",
+//     "rol": "User",
+//     "cart_id": {
+//         "_id": "6642bea1407375ae2dd000b0",
+//         "products": [
+//             {
+//                 "id_prod": "664beee50fe61b058f21e708",
+//                 "quantity": 1,
+//                 "_id": "6678d6345f4f506073f66afa"
+//             }
+//         ],
+//         "__v": 0
+//     },
 //     "__v": 0
-// },
-// "__v": 0
 // }))
+

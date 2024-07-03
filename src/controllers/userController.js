@@ -10,3 +10,25 @@ export const getUsers = async (req, res) => {
         res.status(500).send("Error al consultar users")
     }
 }
+
+export const sendDocuments = async (req, res) => {
+    try {
+        const { uid } = req.params
+        const newDocs = req.body
+        const user = await userModel.findByIdAndUpdate(uid, {
+            $push: {
+                documents: {
+                    $each: newDocs
+                }
+            }
+        }, {new: true})
+        if(!user) {
+            res.status(404).send('User no existe')
+        } else {
+            res.status(200).send(user)
+
+        }
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}

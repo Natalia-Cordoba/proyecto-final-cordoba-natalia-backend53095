@@ -1,9 +1,12 @@
 import { Router } from "express";
+import passport from "passport";
 
-import { getUsers } from "../controllers/userController.js";
+import { getUsers, sendDocuments } from "../controllers/userController.js";
 
 const userRouter = Router()
 
-userRouter.get('/', getUsers)
+userRouter.get('/', passport.authenticate('jwt', { session: false }), getUsers)
+
+userRouter.post('/:uid/documents', sendDocuments)
 
 export default userRouter
