@@ -42,12 +42,15 @@ const userSchema = new Schema({
 
 userSchema.pre('save', async function (next) {
     try {
-        const newCart = await cartModel.create({ products: [] })
-        console.log(newCart)
-        this.cart_id = newCart._id
+        if (this.isNew) {
+            const newCart = await cartModel.create({ products: [] });
+            this.cart_id = newCart._id;
+        }
+        next();
     } catch (error) {
-        next(error)        
+        next(error);
     }
+
 })
 
 userSchema.pre('find', async function (next) {

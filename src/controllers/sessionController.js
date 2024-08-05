@@ -1,28 +1,38 @@
 import userModel from '../models/user.js';
 import { sendEmailChangePassword } from "../utils/nodemailer.js";
 import jwt from 'jsonwebtoken';
+import varenv from '../dotenv.js';
 import { validatePassword, createHash } from '../utils/bcrypt.js';
 
 export const login = async (req, res) => {
+    
     try {
         if (!req.user) {
             req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario o contraseña no validos`)
-
             return res.status(401).send("Usuario o contraseña no validos")
         }
 
+        const user = await userModel.findOne({ email: req.user.email }).populate('cart_id');
+        if (!user) {
+            return res.status(404).send("Usuario no encontrado");
+        }
+        const cartId = user.cart_id ? user.cart_id._id.toString() : null
+
         req.session.user = {
             email: req.user.email,
-            first_name: req.user.first_name
+            first_name: req.user.first_name,
+            cart_id: cartId
         }
+
+        const token = jwt.sign({ email: req.user.email }, varenv.jwt_secret, { expiresIn: '1h' })
 
         req.logger.info("Sesión iniciada correctamente")
         
-        res.status(200).send("Usuario logueado correctamente")
+        res.status(200).json({ token, cartId })
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
 
-        res.status(500).send("Error al loguear usuario")
+        res.status(500).json({ message: 'Error al iniciar sesión' })
     }
 }
 
@@ -35,30 +45,38 @@ export const register = async (req, res) => {
         }
         req.logger.info("Usuario registrado correctamente")
 
-        // res.status(200).send("Usuario creado correctamente")
         res.status(200).json({ payload: req.user })
+
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
-
-        res.status(500).send("Error al registrar usuario")
+        res.status(500).json({ message: "Error al registrar usuario" })
     }
 }
 
 export const logout = async (req, res) => {
-    const user = await userModel.findOne({email: req.session.user.email})
-    user.last_connection = new Date ()
-    await user.save()
-    req.session.destroy(function (e) {
-        if (e) {
-            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
-            
-            return res.status(500).send("Error al cerrar sesión")
-        } else {
-            req.logger.info("Sesión finalizada correctamente")
-
-            res.status(200).redirect("/")
+    try {      
+        const token = req.headers.authorization?.split(' ')[1]; // Obtener el token del header
+        if (!token) {
+            return res.status(401).send("No se puede cerrar sesión sin token");
         }
-    })
+        
+        // Verificar el token
+        const decoded = jwt.verify(token, varenv.jwt_secret); 
+
+        const user = await userModel.findOne({ email: decoded.email });
+
+        if (!user) {
+            return res.status(404).send("Usuario no encontrado");
+        }
+
+        user.last_connection = new Date();
+        await user.save();
+
+        res.status(200).send("Sesión cerrada");
+    } catch (error) {
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`);
+        res.status(500).send("Error al cerrar sesión");
+    }
 }
 
 export const sessionGithub = async (req, res) => {

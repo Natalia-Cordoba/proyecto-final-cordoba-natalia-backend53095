@@ -21,7 +21,7 @@ const initializePassport = () => {
                 if (findUser) {
                     return done(null, false)
                 } else {
-                    const user = await userModel.create({ first_name: first_name, last_name: last_name, age: age, email: email, password: createHash(password) })
+                    const user = await userModel.create({ first_name: first_name, last_name: last_name, age: age, email: email, rol: rol, password: createHash(password) })
                     return done(null, user)
                 }
             } catch (error) {

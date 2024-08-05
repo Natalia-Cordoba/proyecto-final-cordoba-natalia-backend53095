@@ -21,19 +21,18 @@ export const createCart = async (req, res) => {
 //mostrar carrito
 export const getCart = async (req, res) => {
     try {
-        const cartId = req.params.cid
-        const cart = await cartModel.findOne({ _id: cartId })
+        const userId = req.user._id
+        const user = await userModel.findById(userId).populate('cart_id');
+        const cart = user.cart_id;
 
-        let productosProcesados = cart.products.map(producto => ({
-            title: producto.id_prod.title,
-            quantity: producto.quantity
-        }));
+        if (!user || !user.cart_id) {
+            req.logger.error(`Usuario no encontrado para el ID: ${userId}`)
+            return res.status(404).send("Carrito no encontrado");
+        }
 
         req.logger.info("Carrito obtenido correctamente")
 
-        res.status(200).render('templates/cart', {
-            productos: productosProcesados
-        })
+        res.status(200).json(cart)
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
 
@@ -174,63 +173,117 @@ export const updateCart = async (req, res) => {
 
 //actualizar la cantidad de un producto
 export const updateQuantity = async (req, res) => {
+    // try {
+    //     if (req.user.rol == "User" || req.user.rol == "UserPremium") {
+    //         const cartId = req.params.cid;
+    //         const productId = req.params.pid;
+    //         let { quantity } = req.body;
+
+    //         if (!quantity || isNaN(quantity)) {
+    //             quantity = 1;
+    //         }
+    //         const cart = await cartModel.findById(cartId);
+    //         const index = cart.products.findIndex(product => product.id_prod.toString() === productId);
+    //         if (index !== -1) {
+    //             cart.products[index].quantity += parseInt(quantity);
+    //             await cart.save();
+
+    //             req.logger.info("Cantidad actualizada correctamente")
+
+    //             res.status(200).send(cart);
+    //         } else {
+    //             req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: No se encontró el producto que buscas`)
+
+    //             res.status(404).send('Producto no encontrado en el carrito');
+    //         }
+    //     } else {
+    //         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
+    //         res.status(403).send("Usuario no autorizado")
+    //     }
+
+    // } catch (error) {
+    //     req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+    //     res.status(500).send("Error interno del servidor al actualizar la cantidad del producto");
+    // }
+
     try {
-        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
+        if (req.user.rol === "User" || req.user.rol === "UserPremium") {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             let { quantity } = req.body;
 
             if (!quantity || isNaN(quantity)) {
-                quantity = 1;
+                return res.status(400).send("Cantidad inválida");
             }
+
             const cart = await cartModel.findById(cartId);
-            const index = cart.products.findIndex(product => product.id_prod.toString() === productId);
-            if (index !== -1) {
-                cart.products[index].quantity += parseInt(quantity);
+            if (!cart) {
+                return res.status(404).send("Carrito no encontrado");
+            }
+
+            const productIndex = cart.products.findIndex(product => product.id_prod.toString() === productId);
+            if (productIndex !== -1) {
+                cart.products[productIndex].quantity = parseInt(quantity, 10); // Actualiza la cantidad directamente
                 await cart.save();
 
-                req.logger.info("Cantidad actualizada correctamente")
-
-                res.status(200).send(cart);
+                req.logger.info("Cantidad actualizada correctamente");
+                return res.status(200).send(cart);
             } else {
-                req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: No se encontró el producto que buscas`)
-
-                res.status(404).send('Producto no encontrado en el carrito');
+                req.logger.error(`Producto no encontrado en el carrito: ${productId}`);
+                return res.status(404).send("Producto no encontrado en el carrito");
             }
         } else {
-            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
-
-            res.status(403).send("Usuario no autorizado")
+            req.logger.error("Usuario no autorizado");
+            return res.status(403).send("Usuario no autorizado");
         }
-
     } catch (error) {
-        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
-
-        res.status(500).send("Error interno del servidor al actualizar la cantidad del producto");
+        req.logger.error(`Error al actualizar la cantidad del producto: ${error.message}`);
+        return res.status(500).send("Error interno del servidor al actualizar la cantidad del producto");
     }
 };
 
 //eliminar un producto del carrito
 export const deleteProductCart = async (req, res) => {
+    // try {
+    //     if (req.user.rol == "User" || req.user.rol == "UserPremium") {
+    //         const cartId = req.params.cid;
+    //         const productId = req.params.pid;
+    //         const cart = await cartModel.findById(cartId);
+    //         cart.products = cart.products.filter(products => products.id_prod.toString() !== productId);
+    //         await cart.save();
+
+    //         req.logger.info("Producto eliminado del carrito")
+
+    //         res.status(200).send(cart);
+    //     } else {
+    //         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
+
+    //         res.status(403).send("Usuario no autorizado")
+    //     }
+    // } catch (error) {
+    //     req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
+
+    //     res.status(500).send("Error interno del servidor al eliminar el producto del carrito");
+    // }
     try {
-        if (req.user.rol == "User" || req.user.rol == "UserPremium") {
-            const cartId = req.params.cid;
-            const productId = req.params.pid;
-            const cart = await cartModel.findById(cartId);
-            cart.products = cart.products.filter(products => products.id_prod.toString() !== productId);
-            await cart.save();
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
 
-            req.logger.info("Producto eliminado del carrito")
-
-            res.status(200).send(cart);
-        } else {
-            req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: Usuario no autorizado`)
-
-            res.status(403).send("Usuario no autorizado")
+        const cart = await cartModel.findById(cartId);
+        if (!cart) {
+            return res.status(404).send("Carrito no encontrado");
         }
-    } catch (error) {
-        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
 
+        cart.products = cart.products.filter(product => product.id_prod.toString() !== productId);
+        await cart.save();
+
+        req.logger.info("Producto eliminado del carrito");
+
+        res.status(200).send(cart);
+    } catch (error) {
+        req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`);
         res.status(500).send("Error interno del servidor al eliminar el producto del carrito");
     }
 }

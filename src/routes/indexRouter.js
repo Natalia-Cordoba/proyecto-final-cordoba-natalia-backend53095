@@ -25,7 +25,7 @@ indexRouter.use('/api/chat', chatRouter, express.static(__dirname + '/public'))
 indexRouter.use('/api/users', userRouter)
 indexRouter.use('/api/session', sessionRouter)
 
-indexRouter.get('/api/mockingproducts', passport.authenticate('jwt', { session: false }), createRandomProduct);
+// indexRouter.get('/api/mockingproducts', passport.authenticate('jwt', { session: false }), createRandomProduct);
 
 indexRouter.get('/api/loggerTest', loggerTest)
 export default indexRouter;

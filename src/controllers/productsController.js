@@ -24,17 +24,10 @@ export const getProducts = async (req, res) => {
 
         req.logger.info(`Productos obtenidos con éxito: ${prods}`)
 
-        res.status(200).render('templates/index', {
-            mostrarProductos: true,
-            productos: productos,
-            css: 'index.css',
-        })
-
+        res.json(productos)
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}. Error al obtener productos: ${error.message}`)
-        res.status(500).render('templates/error', {
-            error: error,
-        });
+        res.status(500).json({ message: error.message })
     }
 
 }
@@ -47,16 +40,20 @@ export const getProduct = async (req, res) => {
         if (prod) {
             req.logger.info("Producto encontrado")
 
-            res.status(200).send(prod)
+            res.json(prod)
+            console.log(prod)
+            // res.status(200).send(prod)
         } else {
             req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: El producto que buscas no existe`)
 
-            res.status(404).send("Producto no existe")
+            res.status(404).json({ message: error.message })
+            // res.status(404).send("Producto no existe")
         }
     } catch (error) {
         req.logger.error(`Metodo: ${req.method} en ruta ${req.url} - ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}: ${error.message}`)
 
-        res.status(500).send("Error interno del servidor al consultar producto")
+        res.status(500).json({ message: error.message })
+        // res.status(500).send("Error interno del servidor al consultar producto")
     }
 }
 

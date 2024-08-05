@@ -10,6 +10,7 @@ import indexRouter from "./routes/indexRouter.js";
 import initializePassport from './config/passport/passport.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
+import cors from 'cors'
 import { engine } from 'express-handlebars';
 import { __dirname } from './path.js';
 import { Server } from 'socket.io';
@@ -19,6 +20,15 @@ import { addLogger } from './utils/logger.js';
 const app = express()
 //defino el puerto
 const PORT = 8080
+
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'UPDATE', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions))
+
 
 //server
 const server = app.listen(PORT, () => {
